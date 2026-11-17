@@ -1,0 +1,1 @@
+import{describe,expect,it}from"vitest";import{APPLICATION_COLLECTIONS}from"./collection-names.js";describe("MongoDB architecture",()=>{it("declares exactly four physical collections",()=>{expect(APPLICATION_COLLECTIONS).toEqual(["users","tuitions","applications","payments"]);expect(new Set(APPLICATION_COLLECTIONS).size).toBe(4)})});
