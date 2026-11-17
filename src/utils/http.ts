@@ -1,0 +1,5 @@
+import type{NextFunction,Request,Response}from"express";import{ZodError}from"zod";
+export class HttpError extends Error{constructor(public status:number,message:string){super(message)}}
+export const asyncHandler=(fn:(req:Request,res:Response,next:NextFunction)=>Promise<unknown>)=>(req:Request,res:Response,next:NextFunction)=>void fn(req,res,next).catch(next);
+export function notFound(req:Request,_res:Response,next:NextFunction){next(new HttpError(404,`Route ${req.method} ${req.path} was not found`))}
+export function errorHandler(error:unknown,_req:Request,res:Response,_next:NextFunction){if(error instanceof ZodError)return res.status(400).json({message:"Validation failed",issues:error.flatten()});if(error instanceof HttpError)return res.status(error.status).json({message:error.message});if(typeof error==="object"&&error&&"code"in error&&error.code===11000)return res.status(409).json({message:"A conflicting record already exists"});console.error(error);return res.status(500).json({message:"An unexpected server error occurred"})}
