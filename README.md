@@ -23,6 +23,7 @@ This Express and TypeScript API powers MentorLagbe authentication, tuition manag
 ## 🔐 Security and Features
 
 - BetterAuth email/password sessions stored through a custom MongoDB adapter
+- Optional Google sign-in through BetterAuth, with new social accounts defaulting to Student
 - Short-lived JWT access tokens with issuer and audience validation
 - `verifyToken`, `verifyStudent`, `verifyTutor`, and `verifyAdmin` middleware
 - Credentialed CORS, secure production cookies, Helmet, and rate limiting
@@ -31,6 +32,14 @@ This Express and TypeScript API powers MentorLagbe authentication, tuition manag
 - Signed, idempotent Stripe webhook processing
 - Server-side search, filtering, pagination, moderation, and analytics
 - Exactly four physical MongoDB collections
+
+## Optional Assignment Features
+
+- MongoDB server-side pagination using `skip()` and `limit()`
+- Idempotent connected seed data for Tutors, Students, Tuitions, and Applications
+- Student bookmarks stored inside the existing `users` collection
+- Accepted-student reviews stored inside each Tuition document
+- Google OAuth through BetterAuth without adding an authentication collection
 
 ## 🗄️ Database Architecture
 
@@ -88,15 +97,23 @@ npm run build
 
 ```env
 NODE_ENV=production
-BETTER_AUTH_URL=https://mentorlagbe-serverbd.vercel.app
+BETTER_AUTH_URL=https://mentorlagbe.vercel.app/api/backend
 CLIENT_URL=https://mentorlagbe.vercel.app
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+```
+
+For Google OAuth, add this authorized redirect URI in Google Cloud:
+
+```text
+https://mentorlagbe.vercel.app/api/backend/api/better-auth/callback/google
 ```
 
 MongoDB, JWT, BetterAuth, ImgBB, Admin, and Stripe values must be configured privately through Vercel environment variables. Never commit `.env` files or copy secrets into logs.
 
 ## 🌱 Seed Data
 
-The seed command creates an environment-configured Admin, three connected Tutors, and twelve approved tuition listings across multiple subjects. It preserves the required four-collection architecture.
+The idempotent seed command creates an environment-configured Admin, three Tutors, three Students, twelve approved tuition listings, and connected sample applications. It preserves the required four-collection architecture.
 
 ## 🔗 Project Links
 
