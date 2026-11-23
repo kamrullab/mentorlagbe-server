@@ -9,6 +9,8 @@
 [![Express](https://img.shields.io/badge/Express-111111?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Stripe](https://img.shields.io/badge/Stripe_Sandbox-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://stripe.com/)
+[![Four Collections](https://img.shields.io/badge/MongoDB-4_Collections-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Tests](https://img.shields.io/badge/Tests-13_Passing-0B7A6C?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 
 [🌐 Open Frontend](https://mentorlagbe.vercel.app) · [💚 Check API Health](https://mentorlagbe-serverbd.vercel.app/api/health) · [🎨 Client Repository](https://github.com/kamrullab/mentorlagbe-client)
 
@@ -19,6 +21,21 @@
 ## ✨ Overview
 
 This Express and TypeScript API powers MentorLagbe authentication, tuition management, applications, role authorization, MongoDB persistence, and Stripe Sandbox subscriptions.
+
+## 🔑 Admin Demo Account
+
+The following regular Admin account is available for assignment evaluation. It is separate from the environment-protected Super Admin.
+
+| Access | Value |
+|---|---|
+| **Frontend login** | [MentorLagbe Sign In](https://mentorlagbe.vercel.app/sign-in) |
+| **Email** | `demo@kamrul.us` |
+| **Password** | `MentorDemo#2026!` |
+| **Dashboard** | [Admin Dashboard](https://mentorlagbe.vercel.app/dashboard/admin) |
+| **Permissions** | Users, tuition approvals, transactions, and platform statistics |
+
+> [!IMPORTANT]
+> This credential is intentionally public for demonstration only. Production secrets, the Super Admin password, database credentials, OAuth secrets, JWT secrets, and Stripe keys are never committed.
 
 ## 🔐 Security and Features
 
