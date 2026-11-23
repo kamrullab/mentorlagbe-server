@@ -23,11 +23,21 @@ paymentRouter.post("/checkout", json({ limit: "10kb" }), verifyToken, asyncHandl
     mode: "subscription",
     customer_email: req.auth!.email,
     metadata: { email: req.auth!.email, role: plan.role, name: req.auth!.name },
+    subscription_data: { metadata: { email: req.auth!.email, role: plan.role } },
     line_items: [{ quantity: 1, price_data: { currency: "usd", unit_amount: plan.amount, recurring: { interval: "month" }, product_data: { name: `MentorLagbe Pro ${plan.role}` } } }],
     success_url: `${env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.CLIENT_URL}/payment/cancel`,
   });
   res.json({ url: session.url });
+}));
+
+paymentRouter.get("/session/:sessionId", verifyToken, asyncHandler(async (req, res) => {
+  if (!stripe) throw new HttpError(503, "Payments are not configured");
+  const sessionId = String(req.params.sessionId);
+  if (!sessionId.startsWith("cs_")) throw new HttpError(400, "Invalid checkout session");
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.metadata?.email !== req.auth!.email) throw new HttpError(403, "This checkout does not belong to your account");
+  res.json({ paid: session.payment_status === "paid", plan: session.metadata?.role, amount: session.amount_total, currency: session.currency });
 }));
 
 export const stripeWebhook = raw({ type: "application/json" });
@@ -47,6 +57,14 @@ paymentRouter.post("/webhook", stripeWebhook, asyncHandler(async (req, res) => {
         await users.updateOne({ _id: user._id }, { $set: { plan: "pro", updatedAt: new Date() } });
       }
     }
+  }
+  if (event.type === "customer.subscription.deleted") {
+    const email = event.data.object.metadata.email;
+    if (email) { const { users } = await collections(); await users.updateOne({ email }, { $set: { plan: "free", updatedAt: new Date() } }); }
+  }
+  if (event.type === "invoice.payment_failed") {
+    const email = event.data.object.customer_email;
+    if (email) { const { users } = await collections(); await users.updateOne({ email }, { $set: { plan: "free", updatedAt: new Date() } }); }
   }
   res.json({ received: true });
 }));

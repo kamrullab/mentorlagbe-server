@@ -1,1 +1,1 @@
-import app from"./app.js";import{ensureIndexes}from"./db.js";import{env}from"./config/env.js";if(!process.env.VERCEL){await ensureIndexes();app.listen(env.PORT,()=>console.log(`MentorLagbe API listening on ${env.PORT}`))}export default app;
+import app from"./app.js";import{ensureIndexes}from"./db.js";import{env}from"./config/env.js";await ensureIndexes();if(!process.env.VERCEL){app.listen(env.PORT,()=>console.log(`MentorLagbe API listening on ${env.PORT}`))}export default app;
