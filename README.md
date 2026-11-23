@@ -97,7 +97,6 @@ npm run build
 
 ```env
 NODE_ENV=production
-BETTER_AUTH_URL=https://mentorlagbe.vercel.app/api/backend
 CLIENT_URL=https://mentorlagbe.vercel.app
 GOOGLE_CLIENT_ID=your_google_oauth_client_id
 GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
@@ -108,13 +107,13 @@ GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
 For Google OAuth, add this authorized redirect URI in Google Cloud:
 
 ```text
-https://mentorlagbe.vercel.app/api/backend/api/better-auth/callback/google
+https://mentorlagbe.vercel.app/api/backend/better-auth/callback/google
 ```
 
 For a GitHub OAuth App, use this callback URL:
 
 ```text
-https://mentorlagbe.vercel.app/api/backend/api/better-auth/callback/github
+https://mentorlagbe.vercel.app/api/backend/better-auth/callback/github
 ```
 
 MongoDB, JWT, BetterAuth, ImgBB, Admin, and Stripe values must be configured privately through Vercel environment variables. Never commit `.env` files or copy secrets into logs.

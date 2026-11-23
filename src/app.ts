@@ -5,5 +5,5 @@ app.use(helmet());
 app.use(cors({origin:env.CLIENT_URL,credentials:true,methods:["GET","POST","PATCH","DELETE","OPTIONS"],allowedHeaders:["Content-Type","Authorization","Stripe-Signature"]}));
 app.use(rateLimit({windowMs:15*60*1000,limit:300,standardHeaders:true,legacyHeaders:false}));
 app.use(cookieParser());
-app.all("/api/better-auth/*splat",toNodeHandler(auth));
+const authHandler=toNodeHandler(auth);app.all("/api/backend/better-auth/*splat",authHandler);app.all("/api/better-auth/*splat",(req,res)=>{req.url=req.url.replace(/^\/api\/better-auth/,"/api/backend/better-auth");return authHandler(req,res)});
 app.use("/api/payments",paymentRouter);app.use(express.json({limit:"1mb"}));const health=(req:express.Request,res:express.Response)=>req.get("accept")?.includes("text/html")?res.type("html").send(healthPage):res.json({status:"ok",service:"mentorlagbe-api",message:"MentorLagbe API is online and ready"});app.get("/",health);app.get("/api/health",health);app.use("/api/auth",rateLimit({windowMs:15*60*1000,limit:30}),authRouter);app.use("/api/tuitions",tuitionRouter);app.use("/api/applications",applicationRouter);app.use("/api/users",userRouter);app.use("/api/admin",adminRouter);app.use(notFound);app.use(errorHandler);export default app;
