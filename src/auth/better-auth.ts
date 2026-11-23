@@ -1,1 +1,28 @@
-import{betterAuth}from"better-auth";import{env}from"../config/env.js";import{singleCollectionAdapter}from"./single-collection-adapter.js";const socialProviders={...(env.GOOGLE_CLIENT_ID&&env.GOOGLE_CLIENT_SECRET?{google:{clientId:env.GOOGLE_CLIENT_ID,clientSecret:env.GOOGLE_CLIENT_SECRET}}:{}),...(env.GITHUB_CLIENT_ID&&env.GITHUB_CLIENT_SECRET?{github:{clientId:env.GITHUB_CLIENT_ID,clientSecret:env.GITHUB_CLIENT_SECRET}}:{})};const publicAuthURL=`${env.CLIENT_URL.replace(/\/$/,"")}/api/backend/better-auth`;export const auth=betterAuth({appName:"MentorLagbe",baseURL:publicAuthURL,basePath:"/api/backend/better-auth",secret:env.BETTER_AUTH_SECRET||env.JWT_REFRESH_SECRET,trustedOrigins:[env.CLIENT_URL],database:singleCollectionAdapter(),emailAndPassword:{enabled:true,minPasswordLength:8},socialProviders,advanced:env.NODE_ENV==="production"?{useSecureCookies:true,defaultCookieAttributes:{httpOnly:true,secure:true,sameSite:"lax"}}:undefined,user:{additionalFields:{role:{type:"string",required:true,input:true,defaultValue:"student"},plan:{type:"string",required:false,input:false,defaultValue:"free"},phone:{type:"string",required:false,input:true},bio:{type:"string",required:false,input:true},savedTuitionIds:{type:"string[]",required:false,input:false,defaultValue:[]}}}});
+import { betterAuth } from "better-auth";
+import { env } from "../config/env.js";
+import { singleCollectionAdapter } from "./single-collection-adapter.js";
+
+const socialProviders = {
+  ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? { google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET, disableImplicitSignUp: true } } : {}),
+  ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET ? { github: { clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET, disableImplicitSignUp: true } } : {}),
+};
+const publicAuthURL = `${env.CLIENT_URL.replace(/\/$/, "")}/api/backend/better-auth`;
+
+export const auth = betterAuth({
+  appName: "MentorLagbe",
+  baseURL: publicAuthURL,
+  basePath: "/api/backend/better-auth",
+  secret: env.BETTER_AUTH_SECRET || env.JWT_REFRESH_SECRET,
+  trustedOrigins: [env.CLIENT_URL],
+  database: singleCollectionAdapter(),
+  emailAndPassword: { enabled: true, minPasswordLength: 8 },
+  socialProviders,
+  advanced: env.NODE_ENV === "production" ? { useSecureCookies: true, defaultCookieAttributes: { httpOnly: true, secure: true, sameSite: "lax" } } : undefined,
+  user: { additionalFields: {
+    role: { type: "string", required: true, input: true, defaultValue: "student" },
+    plan: { type: "string", required: false, input: false, defaultValue: "free" },
+    phone: { type: "string", required: false, input: true },
+    bio: { type: "string", required: false, input: true },
+    savedTuitionIds: { type: "string[]", required: false, input: false, defaultValue: [] },
+  } },
+});
