@@ -19,6 +19,10 @@ export function checkoutPlan(accountRole: Role, requestedPlan: unknown) {
 paymentRouter.post("/checkout", json({ limit: "10kb" }), verifyToken, asyncHandler(async (req, res) => {
   if (!stripe) throw new HttpError(503, "Payments are not configured");
   const plan = checkoutPlan(req.auth!.role, req.body?.plan);
+  const { users } = await collections();
+  const user = await users.findOne({ email: req.auth!.email }, { projection: { plan: 1 } });
+  if (!user) throw new HttpError(404, "Account not found");
+  if (user.plan === "pro") throw new HttpError(409, "Your account already has an active Pro plan");
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer_email: req.auth!.email,
