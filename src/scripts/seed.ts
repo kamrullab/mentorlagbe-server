@@ -1,6 +1,7 @@
 import { auth } from "../auth/better-auth.js";
 import { collections, ensureIndexes } from "../db.js";
 import { env } from "../config/env.js";
+import { uploadRemoteImage } from "../utils/imgbb.js";
 
 const now = new Date();
 const password = env.ADMIN_PASSWORD || "ChangeMe123!";
@@ -30,13 +31,16 @@ for (const student of students) await account(student.name, student.email, "stud
 const subjects = ["Mathematics", "Physics", "Programming", "IELTS", "English", "Chemistry", "Biology", "Accounting", "Economics", "Statistics", "Web Development", "SAT Math"];
 const photos = ["1509062522246-3755977927d7", "1635070041078-e363dbe005cb", "1516321318423-f06f85e504b3"];
 if (!await tuitions.countDocuments()) {
+  const seedImages = env.IMGBB_API_KEY
+    ? await Promise.all(photos.map((photo, index) => uploadRemoteImage(`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=900&q=80`, `mentorlagbe-seed-${index + 1}`)))
+    : photos.map(photo => `https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=900&q=80`);
   await tuitions.insertMany(subjects.map((subject, i) => ({
     title: `Master ${subject} with guided practice`, subject,
     classLevel: i % 3 === 0 ? "HSC" : i % 3 === 1 ? "University" : "SSC",
     mode: i % 2 ? "Online" as const : "Offline" as const,
     location: i % 2 ? "Google Meet" : "Dhanmondi, Dhaka",
     monthlyFee: 2500 + i * 250, daysPerWeek: 3,
-    bannerImage: `https://images.unsplash.com/photo-${photos[i % 3]}?auto=format&fit=crop&w=900&q=80`,
+    bannerImage: seedImages[i % seedImages.length]!,
     description: `A structured ${subject} mentorship with concept lessons, guided practice, weekly feedback and exam-focused support for ambitious learners.`,
     tutorName: tutors[i % 3]!.name, tutorEmail: tutors[i % 3]!.email,
     approvalStatus: "approved" as const, isActive: true, reviews: [],
